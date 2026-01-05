@@ -3,10 +3,13 @@ package org.intecbrussel.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import org.intecbrussel.model.Course;
 import org.intecbrussel.model.User;
+import org.intecbrussel.model.Role;
 import org.intecbrussel.repository.CourseRepository;
 import org.intecbrussel.exception.ResourceNotFoundException;
+import org.intecbrussel.exception.UnauthorizedActionException;
 
 import java.util.List;
 
@@ -34,8 +37,8 @@ public class CourseService {
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + courseId));
 
         // Alleen ADMIN of de eigen instructor mag updaten
-        if (!course.getInstructor().getId().equals(user.getId()) && user.getRole() != org.intecbrussel.model.Role.ADMIN) {
-            throw new RuntimeException("You are not allowed to update this course");
+        if (!course.getInstructor().getId().equals(user.getId()) && user.getRole() != Role.ADMIN) {
+            throw new UnauthorizedActionException("You are not allowed to update this course");
         }
 
         course.setTitle(updatedCourse.getTitle());
@@ -49,8 +52,8 @@ public class CourseService {
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + courseId));
 
         // Alleen ADMIN mag verwijderen
-        if (user.getRole() != org.intecbrussel.model.Role.ADMIN) {
-            throw new RuntimeException("Only ADMIN can delete courses");
+        if (user.getRole() != Role.ADMIN) {
+            throw new UnauthorizedActionException("Only ADMIN can delete courses");
         }
 
         courseRepository.delete(course);

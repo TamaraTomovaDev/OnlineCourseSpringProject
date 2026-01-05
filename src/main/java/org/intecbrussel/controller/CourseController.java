@@ -8,11 +8,11 @@ import org.intecbrussel.model.Course;
 import org.intecbrussel.model.User;
 import org.intecbrussel.dto.CourseRequest;
 import org.intecbrussel.service.CourseService;
+import org.intecbrussel.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/courses")
@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class CourseController {
 
     private final CourseService courseService;
+    private final UserService userService; // voeg toe
 
     // ---------------- List courses (public) ----------------
     @GetMapping
@@ -64,8 +65,6 @@ public class CourseController {
     // ---------------- Helper: get current authenticated user ----------------
     private User getCurrentUser() {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        // TODO: haal User entity op uit DB via UserRepository
-        // Je kan hier een UserService methode toevoegen: findByUsername(username)
-        return new User(); // tijdelijke placeholder, vervang later
+        return userService.findByUsername(username); // echte User ophalen
     }
 }
