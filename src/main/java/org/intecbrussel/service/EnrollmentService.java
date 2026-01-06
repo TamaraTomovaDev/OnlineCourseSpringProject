@@ -1,6 +1,7 @@
 package org.intecbrussel.service;
 
 import lombok.RequiredArgsConstructor;
+import org.intecbrussel.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +17,6 @@ import org.intecbrussel.exception.UnauthorizedActionException;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,14 +25,32 @@ public class EnrollmentService {
 
     private final EnrollmentRepository enrollmentRepository;
     private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
 
-    // ---------------- Enroll student ----------------
-    public Enrollment enrollStudent(Long courseId, User student) {
+    // ================= ENROLL =================
+
+    // STUDENT enrolls zichzelf
+    public Enrollment enrollSelf(Long courseId, User student) {
+        return enroll(courseId, student);
+    }
+
+    // ADMIN enrollt een student
+    public Enrollment enrollAsAdmin(Long courseId, Long studentId) {
+        User student = userRepository.findById(studentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found: " + studentId));
+
+        if (student.getRole() != Role.STUDENT) {
+            throw new UnauthorizedActionException("Only students can be enrolled");
+        }
+
+        return enroll(courseId, student);
+    }
+
+    private Enrollment enroll(Long courseId, User student) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found: " + courseId));
 
-        boolean exists = enrollmentRepository.existsByStudentAndCourse(student, course);
-        if (exists) {
+        if (enrollmentRepository.existsByStudentAndCourse(student, course)) {
             throw new DuplicateEnrollmentException("Student already enrolled in this course");
         }
 
@@ -40,30 +58,35 @@ public class EnrollmentService {
         enrollment.setStudent(student);
         enrollment.setCourse(course);
         enrollment.setEnrollmentDate(LocalDateTime.now());
+
         return enrollmentRepository.save(enrollment);
     }
 
-    // ---------------- List enrollments ----------------
-    public List<Enrollment> listEnrollments(User user) {
-        if (user.getRole() == Role.STUDENT) {
-            return enrollmentRepository.findByStudent(user);
-        } else if (user.getRole() == Role.INSTRUCTOR) {
-            return enrollmentRepository.findAll()
-                    .stream()
-                    .filter(e -> e.getCourse().getInstructor().getId().equals(user.getId()))
-                    .collect(Collectors.toList());
-        } else if (user.getRole() == Role.ADMIN) {
-            return enrollmentRepository.findAll();
-        }
-        return List.of();
+    // ================= LIST =================
+
+    public List<Enrollment> getStudentEnrollments(User student) {
+        return enrollmentRepository.findByStudent(student);
     }
 
-    // ---------------- Cancel enrollment ----------------
+    public List<Enrollment> getInstructorEnrollments(User instructor) {
+        return enrollmentRepository.findAll()
+                .stream()
+                .filter(e -> e.getCourse().getInstructor().getId().equals(instructor.getId()))
+                .toList();
+    }
+
+    public List<Enrollment> getAllEnrollments() {
+        return enrollmentRepository.findAll();
+    }
+
+    // ================= CANCEL =================
+
     public void cancelEnrollment(Long enrollmentId, User user) {
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Enrollment not found: " + enrollmentId));
 
-        if (user.getRole() == Role.STUDENT && !enrollment.getStudent().getId().equals(user.getId())) {
+        if (user.getRole() == Role.STUDENT &&
+                !enrollment.getStudent().getId().equals(user.getId())) {
             throw new UnauthorizedActionException("You can only cancel your own enrollment");
         }
 

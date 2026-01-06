@@ -14,7 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,67 +22,76 @@ public class EnrollmentController {
     private final EnrollmentService enrollmentService;
     private final UserService userService;
 
-    // ---------------- Enroll student ----------------
-    @PostMapping("/api/courses/{id}/enroll")
-    @PreAuthorize("hasAnyRole('STUDENT','ADMIN')")
-    public ResponseEntity<EnrollmentResponse> enrollStudent(@PathVariable Long id) {
+    // ================= ENROLL =================
+
+    // STUDENT self-enroll
+    @PostMapping("/api/courses/{courseId}/enroll")
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<EnrollmentResponse> enrollSelf(@PathVariable Long courseId) {
         User currentUser = getCurrentUser();
-        Enrollment enrollment = enrollmentService.enrollStudent(id, currentUser);
+        Enrollment enrollment = enrollmentService.enrollSelf(courseId, currentUser);
         return ResponseEntity.ok(toResponse(enrollment));
     }
 
-    // ---------------- Get enrollments (STUDENT self) ----------------
+    // ADMIN enrolls student
+    @PostMapping("/api/admin/courses/{courseId}/enroll/{studentId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<EnrollmentResponse> enrollAsAdmin(
+            @PathVariable Long courseId,
+            @PathVariable Long studentId) {
+
+        Enrollment enrollment = enrollmentService.enrollAsAdmin(courseId, studentId);
+        return ResponseEntity.ok(toResponse(enrollment));
+    }
+
+    // ================= LIST =================
+
     @GetMapping("/api/enrollments/me")
     @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<List<EnrollmentResponse>> myEnrollments() {
         User currentUser = getCurrentUser();
-        List<EnrollmentResponse> responseList = enrollmentService.listEnrollments(currentUser)
-                .stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(responseList);
+        return ResponseEntity.ok(
+                enrollmentService.getStudentEnrollments(currentUser)
+                        .stream().map(this::toResponse).toList()
+        );
     }
 
-    // ---------------- Get enrollments (INSTRUCTOR own courses) ----------------
     @GetMapping("/api/instructor/enrollments")
     @PreAuthorize("hasRole('INSTRUCTOR')")
     public ResponseEntity<List<EnrollmentResponse>> instructorEnrollments() {
         User currentUser = getCurrentUser();
-        List<EnrollmentResponse> responseList = enrollmentService.listEnrollments(currentUser)
-                .stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(responseList);
+        return ResponseEntity.ok(
+                enrollmentService.getInstructorEnrollments(currentUser)
+                        .stream().map(this::toResponse).toList()
+        );
     }
 
-    // ---------------- Get enrollments (ADMIN sees all) ----------------
     @GetMapping("/api/admin/enrollments")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<EnrollmentResponse>> adminEnrollments() {
-        User currentUser = getCurrentUser();
-        List<EnrollmentResponse> responseList = enrollmentService.listEnrollments(currentUser)
-                .stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(responseList);
+        return ResponseEntity.ok(
+                enrollmentService.getAllEnrollments()
+                        .stream().map(this::toResponse).toList()
+        );
     }
 
-    // ---------------- Cancel enrollment ----------------
+    // ================= CANCEL =================
+
     @DeleteMapping("/api/enrollments/{id}")
     @PreAuthorize("hasAnyRole('STUDENT','ADMIN')")
     public ResponseEntity<String> cancelEnrollment(@PathVariable Long id) {
-        User currentUser = getCurrentUser();
-        enrollmentService.cancelEnrollment(id, currentUser);
+        enrollmentService.cancelEnrollment(id, getCurrentUser());
         return ResponseEntity.ok("Enrollment canceled successfully");
     }
 
-    // ---------------- Helper: get current authenticated user ----------------
+    // ================= HELPERS =================
+
     private User getCurrentUser() {
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = (String) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
         return userService.findByUsername(username);
     }
 
-    // ---------------- Helper: convert Enrollment → EnrollmentResponse ----------------
     private EnrollmentResponse toResponse(Enrollment enrollment) {
         EnrollmentResponse response = new EnrollmentResponse();
         response.setId(enrollment.getId());
@@ -93,3 +101,4 @@ public class EnrollmentController {
         return response;
     }
 }
+

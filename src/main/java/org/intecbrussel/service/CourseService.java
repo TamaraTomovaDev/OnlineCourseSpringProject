@@ -20,42 +20,48 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
 
-    // ---------------- List all courses ----------------
-    public List<Course> listCourses() {
+    // ================= LIST =================
+    public List<Course> listAll() {
         return courseRepository.findAll();
     }
 
-    // ---------------- Create course ----------------
-    public Course createCourse(Course course, User instructor) {
+    public Course getById(Long id) {
+        return courseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found: " + id));
+    }
+
+    // ================= CREATE =================
+    public Course createCourse(String title, String description, User instructor) {
+        if (instructor.getRole() != Role.INSTRUCTOR && instructor.getRole() != Role.ADMIN) {
+            throw new UnauthorizedActionException("Only instructors or admins can create courses");
+        }
+
+        Course course = new Course();
+        course.setTitle(title);
+        course.setDescription(description);
         course.setInstructor(instructor);
+
         return courseRepository.save(course);
     }
 
-    // ---------------- Update course ----------------
-    public Course updateCourse(Long courseId, Course updatedCourse, User user) {
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + courseId));
+    // ================= UPDATE =================
+    public Course updateCourse(Long courseId, String title, String description, User user) {
+        Course course = getById(courseId);
 
-        // Alleen ADMIN of de eigen instructor mag updaten
-        if (!course.getInstructor().getId().equals(user.getId()) && user.getRole() != Role.ADMIN) {
-            throw new UnauthorizedActionException("You are not allowed to update this course");
+        if (user.getRole() == Role.INSTRUCTOR &&
+                !course.getInstructor().getId().equals(user.getId())) {
+            throw new UnauthorizedActionException("You can only update your own courses");
         }
 
-        course.setTitle(updatedCourse.getTitle());
-        course.setDescription(updatedCourse.getDescription());
+        course.setTitle(title);
+        course.setDescription(description);
         return courseRepository.save(course);
     }
 
-    // ---------------- Delete course ----------------
-    public void deleteCourse(Long courseId, User user) {
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + courseId));
-
-        // Alleen ADMIN mag verwijderen
-        if (user.getRole() != Role.ADMIN) {
-            throw new UnauthorizedActionException("Only ADMIN can delete courses");
-        }
-
+    // ================= DELETE =================
+    public void deleteCourse(Long courseId) {
+        Course course = getById(courseId);
         courseRepository.delete(course);
     }
 }
+

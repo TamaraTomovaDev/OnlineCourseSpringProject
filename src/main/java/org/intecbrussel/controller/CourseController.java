@@ -1,6 +1,7 @@
 package org.intecbrussel.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.intecbrussel.dto.CourseResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,51 +21,76 @@ import java.util.List;
 public class CourseController {
 
     private final CourseService courseService;
-    private final UserService userService; // voeg toe
+    private final UserService userService;
 
-    // ---------------- List courses (public) ----------------
+    // ================= LIST =================
     @GetMapping
-    public ResponseEntity<List<Course>> listCourses() {
-        return ResponseEntity.ok(courseService.listCourses());
+    public ResponseEntity<List<CourseResponse>> listCourses() {
+        return ResponseEntity.ok(
+                courseService.listAll()
+                        .stream()
+                        .map(this::toResponse)
+                        .toList()
+        );
     }
 
-    // ---------------- Create course ----------------
+    @GetMapping("/{id}")
+    public ResponseEntity<CourseResponse> getCourse(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                toResponse(courseService.getById(id))
+        );
+    }
+
+    // ================= CREATE =================
     @PostMapping
     @PreAuthorize("hasAnyRole('INSTRUCTOR','ADMIN')")
-    public ResponseEntity<Course> createCourse(@RequestBody CourseRequest request) {
+    public ResponseEntity<CourseResponse> createCourse(@RequestBody CourseRequest request) {
         User currentUser = getCurrentUser();
-        Course course = new Course();
-        course.setTitle(request.getTitle());
-        course.setDescription(request.getDescription());
-        Course created = courseService.createCourse(course, currentUser);
-        return ResponseEntity.ok(created);
+        Course course = courseService.createCourse(
+                request.getTitle(),
+                request.getDescription(),
+                currentUser
+        );
+        return ResponseEntity.ok(toResponse(course));
     }
 
-    // ---------------- Update course ----------------
+    // ================= UPDATE =================
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('INSTRUCTOR','ADMIN')")
-    public ResponseEntity<Course> updateCourse(@PathVariable Long id,
-                                               @RequestBody CourseRequest request) {
-        User currentUser = getCurrentUser();
-        Course updated = new Course();
-        updated.setTitle(request.getTitle());
-        updated.setDescription(request.getDescription());
-        Course course = courseService.updateCourse(id, updated, currentUser);
-        return ResponseEntity.ok(course);
+    public ResponseEntity<CourseResponse> updateCourse(
+            @PathVariable Long id,
+            @RequestBody CourseRequest request) {
+
+        Course course = courseService.updateCourse(
+                id,
+                request.getTitle(),
+                request.getDescription(),
+                getCurrentUser()
+        );
+        return ResponseEntity.ok(toResponse(course));
     }
 
-    // ---------------- Delete course ----------------
+    // ================= DELETE =================
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteCourse(@PathVariable Long id) {
-        User currentUser = getCurrentUser();
-        courseService.deleteCourse(id, currentUser);
+        courseService.deleteCourse(id);
         return ResponseEntity.ok("Course deleted successfully");
     }
 
-    // ---------------- Helper: get current authenticated user ----------------
+    // ================= HELPERS =================
     private User getCurrentUser() {
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userService.findByUsername(username); // echte User ophalen
+        String username = (String) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        return userService.findByUsername(username);
+    }
+
+    private CourseResponse toResponse(Course course) {
+        CourseResponse response = new CourseResponse();
+        response.setId(course.getId());
+        response.setTitle(course.getTitle());
+        response.setDescription(course.getDescription());
+        response.setInstructorUsername(course.getInstructor().getUsername());
+        return response;
     }
 }
