@@ -5,4 +5,3 @@ public class DuplicateEnrollmentException extends RuntimeException {
         super(message);
     }
 }
-
