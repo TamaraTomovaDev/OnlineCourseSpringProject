@@ -9,22 +9,33 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Login / Register fouten
+    // ================= LOGIN / REGISTER =================
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<Map<String, Object>> handleInvalidCredentials(InvalidCredentialsException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED) // 🔴 401
                 .body(Map.of(
                         "timestamp", LocalDateTime.now(),
                         "error", ex.getMessage()
                 ));
     }
 
-    // Geen resource gevonden
+    // ================= JWT =================
+    @ExceptionHandler(JwtAuthenticationException.class)
+    public ResponseEntity<Map<String, Object>> handleJwtAuth(JwtAuthenticationException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of(
+                        "timestamp", LocalDateTime.now(),
+                        "error", ex.getMessage()
+                ));
+    }
+
+    // ================= RESOURCE NOT FOUND =================
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleNotFound(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -34,7 +45,7 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    // Actie niet toegelaten
+    // ================= UNAUTHORIZED ACTION =================
     @ExceptionHandler(UnauthorizedActionException.class)
     public ResponseEntity<Map<String, Object>> handleUnauthorized(UnauthorizedActionException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
@@ -44,17 +55,17 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    // Duplicate enrollment
+    // ================= DUPLICATE ENROLLMENT =================
     @ExceptionHandler(DuplicateEnrollmentException.class)
     public ResponseEntity<Map<String, Object>> handleDuplicate(DuplicateEnrollmentException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(HttpStatus.CONFLICT) // 🔴 409
                 .body(Map.of(
                         "timestamp", LocalDateTime.now(),
                         "error", ex.getMessage()
                 ));
     }
 
-    // Spring Security – geen rechten
+    // ================= SPRING SECURITY =================
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Map<String, Object>> handleAccessDenied() {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
@@ -64,7 +75,6 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    // JWT / authentication errors
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Map<String, Object>> handleAuthentication() {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -74,7 +84,14 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    // Verkeerde enum / parameter
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<Map<String, String>> handleAuthException(AuthException ex) {
+        Map<String, String> body = new HashMap<>();
+        body.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body); // 401
+    }
+
+    // ================= INVALID PARAMS =================
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Map<String, Object>> handleMethodArgumentTypeMismatch() {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -84,7 +101,7 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    // Laatste vangnet (ECHT alleen onverwachte fouten)
+    // ================= GENERIC / UNEXPECTED =================
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

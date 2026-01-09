@@ -22,7 +22,7 @@ public class User extends AuditModel {
     private String email;
 
     @Column(nullable = false)
-    private String password;
+    private String password; // moet gehashed zijn
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -39,6 +39,4 @@ public class User extends AuditModel {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
-
 }
-

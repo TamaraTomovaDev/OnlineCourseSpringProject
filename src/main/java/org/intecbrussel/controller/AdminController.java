@@ -1,6 +1,7 @@
 package org.intecbrussel.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.intecbrussel.dto.UserResponse;
 import org.intecbrussel.model.Role;
 import org.intecbrussel.model.User;
 import org.intecbrussel.service.UserService;
@@ -13,31 +14,48 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')") // alle endpoints in deze controller = admin-only
+@PreAuthorize("hasRole('ADMIN')") // alles in deze controller = admin-only
 public class AdminController {
-
+    public record ChangeRoleRequest(Role role) {}
     private final UserService userService;
 
-    // ---------------- Get all users ----------------
+    // ---------------- GET ALL USERS ----------------
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        List<UserResponse> users = userService.getAllUsers()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+
+        return ResponseEntity.ok(users);
     }
 
-    // ---------------- Change user role ----------------
+    // ---------------- CHANGE USER ROLE ----------------
     @PutMapping("/users/{id}/role")
-    public ResponseEntity<User> changeUserRole(
+    public ResponseEntity<UserResponse> changeUserRole(
             @PathVariable Long id,
-            @RequestParam Role role) {
+            @RequestBody ChangeRoleRequest request) {
 
-        User updated = userService.changeRole(id, role);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(
+                toResponse(userService.changeRole(id, request.role()))
+        );
     }
 
-    // ---------------- Delete user ----------------
+    // ---------------- DELETE USER ----------------
     @DeleteMapping("/users/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.ok("User deleted successfully");
+    }
+
+    // ---------------- DTO MAPPER ----------------
+    private UserResponse toResponse(User user) {
+        UserResponse dto = new UserResponse();
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setRole(user.getRole());
+        dto.setCreatedAt(user.getCreatedAt());
+        return dto;
     }
 }

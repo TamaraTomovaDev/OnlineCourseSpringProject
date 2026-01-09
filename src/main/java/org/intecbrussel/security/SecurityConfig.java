@@ -29,49 +29,49 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .cors(Customizer.withDefaults())
+        http.cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Publieke endpoints
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/courses", "/api/courses/*").permitAll()
 
-                        // Student endpoints
-                        .requestMatchers("/api/courses/*/enroll").hasAnyRole("STUDENT", "ADMIN")
+                        // PUBLIC
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/courses/**").permitAll()
+
+                        // INSTRUCTOR / ADMIN
+                        .requestMatchers(HttpMethod.POST, "/api/courses").hasAnyRole("INSTRUCTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/courses/**").hasAnyRole("INSTRUCTOR", "ADMIN")
+
+                        // STUDENT
+                        .requestMatchers(HttpMethod.POST, "/api/courses/*/enroll").hasAnyRole("STUDENT", "ADMIN")
                         .requestMatchers("/api/enrollments/me").hasRole("STUDENT")
 
-                        // Instructor endpoints
-                        .requestMatchers("/api/courses").hasAnyRole("INSTRUCTOR", "ADMIN") // POST voor aanmaken
-                        .requestMatchers(HttpMethod.PUT, "/api/courses/*").hasAnyRole("INSTRUCTOR", "ADMIN")
-                        .requestMatchers("/api/instructor/enrollments").hasRole("INSTRUCTOR")
+                        // INSTRUCTOR
+                        .requestMatchers("/api/instructor/**").hasRole("INSTRUCTOR")
 
-                        // Admin endpoints
+                        // ADMIN
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                        // Alles wat niet hierboven staat → beveiligd
+                        // DEFAULT
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
-                        // 401 - geen of ongeldig token
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.setContentType("application/json");
-                            response.getWriter().write("""
-                        {
-                          "error": "Unauthorized"
-                        }
-                    """);
+                        .authenticationEntryPoint((req, res, ex2) -> {
+                            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            res.setContentType("application/json");
+                            res.getWriter().write("""
+                                    {
+                                      "error": "Unauthorized"
+                                    }
+                                    """);
                         })
-                        // 403 - wel ingelogd, maar geen rechten
-                        .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                            response.setContentType("application/json");
-                            response.getWriter().write("""
-                        {
-                          "error": "Access Denied"
-                        }
-                    """);
+                        .accessDeniedHandler((req, res, ex2) -> {
+                            res.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            res.setContentType("application/json");
+                            res.getWriter().write("""
+                                    {
+                                      "error": "Access Denied"
+                                    }
+                                    """);
                         })
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
