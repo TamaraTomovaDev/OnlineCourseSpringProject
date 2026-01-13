@@ -2,7 +2,9 @@ package org.intecbrussel.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.intecbrussel.dto.EnrollmentResponse;
+import org.intecbrussel.exception.UnauthorizedActionException;
 import org.intecbrussel.model.Enrollment;
+import org.intecbrussel.model.Role;
 import org.intecbrussel.model.User;
 import org.intecbrussel.service.EnrollmentService;
 import org.intecbrussel.service.UserService;
@@ -21,67 +23,95 @@ public class EnrollmentController {
     private final EnrollmentService enrollmentService;
     private final UserService userService;
 
-    // -------- STUDENT --------
+    /**
+     * POST /api/courses/{id}/enroll
+     * - STUDENT: schrijft zichzelf in
+     * - ADMIN: schrijft student in via ?studentId=...
+     */
     @PostMapping("/courses/{courseId}/enroll")
-    @PreAuthorize("hasRole('STUDENT')")
-    public ResponseEntity<EnrollmentResponse> enrollSelf(@PathVariable Long courseId) {
-        Enrollment enrollment = enrollmentService.enrollSelf(courseId, getCurrentUser());
+    @PreAuthorize("hasAnyRole('STUDENT','ADMIN')")
+    public ResponseEntity<EnrollmentResponse> enroll(
+            @PathVariable Long courseId,
+            @RequestParam(required = false) Long studentId
+    ) {
+        User current = getCurrentUser();
+
+        Enrollment enrollment;
+        if (current.getRole() == Role.ADMIN) {
+            if (studentId == null) {
+                throw new UnauthorizedActionException("studentId is required for admin enrollment");
+            }
+            enrollment = enrollmentService.enrollAsAdmin(courseId, studentId);
+        } else {
+            enrollment = enrollmentService.enrollSelf(courseId, current);
+        }
+
         return ResponseEntity.ok(toResponse(enrollment));
     }
 
+    /**
+     * GET /api/enrollments/me
+     * - STUDENT: ziet alleen eigen enrollments
+     * - ADMIN: mag dit endpoint ook gebruiken (zal meestal leeg zijn tenzij admin ook enrollments heeft)
+     */
     @GetMapping("/enrollments/me")
-    @PreAuthorize("hasRole('STUDENT')")
+    @PreAuthorize("hasAnyRole('STUDENT','ADMIN')")
     public ResponseEntity<List<EnrollmentResponse>> myEnrollments() {
+        User current = getCurrentUser();
+
         return ResponseEntity.ok(
-                enrollmentService.getStudentEnrollments(getCurrentUser())
-                        .stream().map(this::toResponse).toList()
+                enrollmentService.getStudentEnrollments(current)
+                        .stream()
+                        .map(this::toResponse)
+                        .toList()
         );
     }
 
-    // -------- INSTRUCTOR --------
+    /**
+     * GET /api/instructor/enrollments
+     * - INSTRUCTOR: ziet enrollments van eigen courses
+     */
     @GetMapping("/instructor/enrollments")
     @PreAuthorize("hasRole('INSTRUCTOR')")
     public ResponseEntity<List<EnrollmentResponse>> instructorEnrollments() {
         return ResponseEntity.ok(
                 enrollmentService.getInstructorEnrollments(getCurrentUser())
-                        .stream().map(this::toResponse).toList()
+                        .stream()
+                        .map(this::toResponse)
+                        .toList()
         );
     }
 
-    // -------- ADMIN --------
-    @PostMapping("/admin/courses/{courseId}/enroll/{studentId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<EnrollmentResponse> enrollAsAdmin(
-            @PathVariable Long courseId,
-            @PathVariable Long studentId) {
-
-        return ResponseEntity.ok(
-                toResponse(enrollmentService.enrollAsAdmin(courseId, studentId))
-        );
-    }
-
+    /**
+     * GET /api/admin/enrollments
+     * - ADMIN: ziet alle enrollments
+     */
     @GetMapping("/admin/enrollments")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<EnrollmentResponse>> allEnrollments() {
         return ResponseEntity.ok(
                 enrollmentService.getAllEnrollments()
-                        .stream().map(this::toResponse).toList()
+                        .stream()
+                        .map(this::toResponse)
+                        .toList()
         );
     }
 
-    // -------- SHARED (DELETE) --------
+    /**
+     * DELETE /api/enrollments/{id}
+     * - STUDENT: kan alleen eigen enrollment annuleren (service check)
+     * - ADMIN: mag alles annuleren
+     */
     @DeleteMapping("/enrollments/{id}")
     @PreAuthorize("hasAnyRole('STUDENT','ADMIN')")
     public ResponseEntity<String> cancelEnrollment(@PathVariable Long id) {
-        User currentUser = getCurrentUser();
-        enrollmentService.cancelEnrollment(id, currentUser); // service layer checkt of student alleen eigen enrollment kan cancelen
+        enrollmentService.cancelEnrollment(id, getCurrentUser());
         return ResponseEntity.ok("Enrollment canceled successfully");
     }
 
-    // -------- HELPERS --------
+    // ===== Helpers =====
     private User getCurrentUser() {
-        String username = SecurityContextHolder.getContext()
-                .getAuthentication().getName();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userService.findByUsername(username);
     }
 

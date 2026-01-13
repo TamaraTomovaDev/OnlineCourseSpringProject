@@ -1,10 +1,8 @@
 package org.intecbrussel.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.ExpiredJwtException;
-import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Nonnull;
 import org.intecbrussel.exception.JwtAuthenticationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -20,73 +18,44 @@ public class JwtUtil {
     @Value("${jwt.expiration-hours}")
     private long expirationHours;
 
-    public JwtUtil(Key key) {
-        this.key = key;
+    public JwtUtil(Key jwtSigningKey) {
+        this.key = jwtSigningKey;
     }
 
-    /**
-     * Genereert JWT token met username en role claim
-     */
     public String generateToken(String username, String role) {
+        long expMs = expirationHours * 60 * 60 * 1000;
+
         return Jwts.builder()
-                .setSubject(username)
-                .claim("role", role)
+                .setSubject(username)          // ✅ sub
+                .claim("role", role)           // ✅ role claim
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationHours * 60 * 60 * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + expMs))
                 .signWith(key)
                 .compact();
     }
 
-    /**
-     * Valideert token. Gooi exception bij verlopen of ongeldig token.
-     */
+    public Claims parseClaims(@Nonnull String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            throw new JwtAuthenticationException("Invalid or expired JWT token");
+        }
+    }
+
     public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (ExpiredJwtException e) {
-            throw new JwtAuthenticationException("JWT token expired");
-        } catch (Exception e) {
-            throw new JwtAuthenticationException("Invalid JWT token");
-        }
+        parseClaims(token); // throws if invalid
+        return true;
     }
 
-    /**
-     * Haalt username uit token
-     */
     public String getUsername(String token) {
-        try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getSubject();
-        } catch (ExpiredJwtException e) {
-            throw new JwtAuthenticationException("JWT token expired");
-        } catch (Exception e) {
-            throw new JwtAuthenticationException("Invalid JWT token");
-        }
+        return parseClaims(token).getSubject();
     }
 
-    /**
-     * Haalt role uit token
-     */
     public String getRole(String token) {
-        try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .get("role", String.class);
-        } catch (ExpiredJwtException e) {
-            throw new JwtAuthenticationException("JWT token expired");
-        } catch (Exception e) {
-            throw new JwtAuthenticationException("Invalid JWT token");
-        }
+        return parseClaims(token).get("role", String.class);
     }
 }

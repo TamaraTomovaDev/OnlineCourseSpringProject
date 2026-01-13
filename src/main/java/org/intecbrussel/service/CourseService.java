@@ -20,7 +20,6 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
 
-    // ================= LIST =================
     public List<Course> listAll() {
         return courseRepository.findAll();
     }
@@ -30,24 +29,26 @@ public class CourseService {
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found: " + id));
     }
 
-    // ================= CREATE =================
     public Course createCourse(String title, String description, User instructor) {
         if (instructor.getRole() != Role.INSTRUCTOR && instructor.getRole() != Role.ADMIN) {
             throw new UnauthorizedActionException("Only instructors or admins can create courses");
         }
-
         Course course = new Course();
         course.setTitle(title);
         course.setDescription(description);
         course.setInstructor(instructor);
-
         return courseRepository.save(course);
     }
 
-    // ================= UPDATE =================
     public Course updateCourse(Long courseId, String title, String description, User user) {
         Course course = getById(courseId);
 
+        // student mag nooit
+        if (user.getRole() == Role.STUDENT) {
+            throw new UnauthorizedActionException("Students cannot update courses");
+        }
+
+        // instructor alleen eigen course
         if (user.getRole() == Role.INSTRUCTOR &&
                 !course.getInstructor().getId().equals(user.getId())) {
             throw new UnauthorizedActionException("You can only update your own courses");
@@ -58,10 +59,11 @@ public class CourseService {
         return courseRepository.save(course);
     }
 
-    // ================= DELETE =================
-    public void deleteCourse(Long courseId) {
+    public void deleteCourse(Long courseId, User user) {
+        if (user.getRole() != Role.ADMIN) {
+            throw new UnauthorizedActionException("Only admins can delete courses");
+        }
         Course course = getById(courseId);
         courseRepository.delete(course);
     }
 }
-

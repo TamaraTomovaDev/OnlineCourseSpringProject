@@ -7,6 +7,7 @@ import org.intecbrussel.model.User;
 import org.intecbrussel.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,12 +15,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')") // alles in deze controller = admin-only
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
-    public record ChangeRoleRequest(Role role) {}
+
+    public record ChangeRoleRequest(@jakarta.validation.constraints.NotNull Role role) {}
+
     private final UserService userService;
 
-    // ---------------- GET ALL USERS ----------------
     @GetMapping("/users")
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         List<UserResponse> users = userService.getAllUsers()
@@ -30,25 +32,24 @@ public class AdminController {
         return ResponseEntity.ok(users);
     }
 
-    // ---------------- CHANGE USER ROLE ----------------
     @PutMapping("/users/{id}/role")
     public ResponseEntity<UserResponse> changeUserRole(
             @PathVariable Long id,
-            @RequestBody ChangeRoleRequest request) {
+            @jakarta.validation.Valid @RequestBody ChangeRoleRequest request) {
 
-        return ResponseEntity.ok(
-                toResponse(userService.changeRole(id, request.role()))
-        );
+        return ResponseEntity.ok(toResponse(userService.changeRole(id, request.role())));
     }
 
-    // ---------------- DELETE USER ----------------
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.ok("User deleted successfully");
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        // current admin ophalen
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentAdmin = userService.findByUsername(username);
+
+        userService.deleteUser(id, currentAdmin);
+        return ResponseEntity.noContent().build(); // 204
     }
 
-    // ---------------- DTO MAPPER ----------------
     private UserResponse toResponse(User user) {
         UserResponse dto = new UserResponse();
         dto.setId(user.getId());

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
 @Configuration
@@ -15,6 +16,9 @@ public class JwtConfig {
 
     @Bean
     public Key jwtSigningKey() {
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        if (jwtSecret == null || jwtSecret.length() < 32) {
+            throw new IllegalStateException("jwt.secret must be at least 32 characters long");
+        }
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 }

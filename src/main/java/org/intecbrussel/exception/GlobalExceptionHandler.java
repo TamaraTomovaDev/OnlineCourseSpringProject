@@ -1,9 +1,11 @@
 package org.intecbrussel.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -15,99 +17,100 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // ================= LOGIN / REGISTER =================
-    @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<Map<String, Object>> handleInvalidCredentials(InvalidCredentialsException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED) // 🔴 401
-                .body(Map.of(
-                        "timestamp", LocalDateTime.now(),
-                        "error", ex.getMessage()
-                ));
+    // ===== helper om consistente JSON te maken =====
+    private ResponseEntity<Map<String, Object>> build(HttpStatus status, String message, HttpServletRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", status.value());
+        body.put("error", status.getReasonPhrase());
+        body.put("message", message);
+        body.put("path", request.getRequestURI());
+        return ResponseEntity.status(status).body(body);
     }
 
-    // ================= JWT =================
-    @ExceptionHandler(JwtAuthenticationException.class)
-    public ResponseEntity<Map<String, Object>> handleJwtAuth(JwtAuthenticationException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of(
-                        "timestamp", LocalDateTime.now(),
-                        "error", ex.getMessage()
-                ));
+    // ===== VALIDATION ( @Valid ) =====
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex,
+                                                                HttpServletRequest request) {
+        Map<String, String> fieldErrors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors()
+                .forEach(err -> fieldErrors.put(err.getField(), err.getDefaultMessage()));
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
+        body.put("message", "Validation failed");
+        body.put("path", request.getRequestURI());
+        body.put("fields", fieldErrors);
+
+        return ResponseEntity.badRequest().body(body);
     }
 
-    // ================= RESOURCE NOT FOUND =================
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleNotFound(ResourceNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of(
-                        "timestamp", LocalDateTime.now(),
-                        "error", ex.getMessage()
-                ));
-    }
-
-    // ================= UNAUTHORIZED ACTION =================
-    @ExceptionHandler(UnauthorizedActionException.class)
-    public ResponseEntity<Map<String, Object>> handleUnauthorized(UnauthorizedActionException ex) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(Map.of(
-                        "timestamp", LocalDateTime.now(),
-                        "error", ex.getMessage()
-                ));
-    }
-
-    // ================= DUPLICATE ENROLLMENT =================
-    @ExceptionHandler(DuplicateEnrollmentException.class)
-    public ResponseEntity<Map<String, Object>> handleDuplicate(DuplicateEnrollmentException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT) // 🔴 409
-                .body(Map.of(
-                        "timestamp", LocalDateTime.now(),
-                        "error", ex.getMessage()
-                ));
-    }
-
-    // ================= SPRING SECURITY =================
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Map<String, Object>> handleAccessDenied() {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(Map.of(
-                        "timestamp", LocalDateTime.now(),
-                        "error", "Access denied"
-                ));
-    }
-
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<Map<String, Object>> handleAuthentication() {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of(
-                        "timestamp", LocalDateTime.now(),
-                        "error", "Unauthorized"
-                ));
-    }
-
-    @ExceptionHandler(AuthException.class)
-    public ResponseEntity<Map<String, String>> handleAuthException(AuthException ex) {
-        Map<String, String> body = new HashMap<>();
-        body.put("error", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body); // 401
-    }
-
-    // ================= INVALID PARAMS =================
+    // ===== INVALID PARAMS =====
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Map<String, Object>> handleMethodArgumentTypeMismatch() {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of(
-                        "timestamp", LocalDateTime.now(),
-                        "error", "Invalid parameter value"
-                ));
+    public ResponseEntity<Map<String, Object>> handleTypeMismatch(MethodArgumentTypeMismatchException ex,
+                                                                  HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "Invalid parameter value", request);
     }
 
-    // ================= GENERIC / UNEXPECTED =================
+    // ===== DOMAIN EXCEPTIONS =====
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleNotFound(ResourceNotFoundException ex,
+                                                              HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(UnauthorizedActionException.class)
+    public ResponseEntity<Map<String, Object>> handleForbidden(UnauthorizedActionException ex,
+                                                               HttpServletRequest request) {
+        return build(HttpStatus.FORBIDDEN, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(DuplicateEnrollmentException.class)
+    public ResponseEntity<Map<String, Object>> handleDuplicateEnrollment(DuplicateEnrollmentException ex,
+                                                                         HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), request);
+    }
+
+    // als je DuplicateResourceException gebruikt in register (username/email)
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<Map<String, Object>> handleDuplicateResource(DuplicateResourceException ex,
+                                                                       HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), request);
+    }
+
+    // ===== AUTH / JWT =====
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidCredentials(InvalidCredentialsException ex,
+                                                                        HttpServletRequest request) {
+        return build(HttpStatus.UNAUTHORIZED, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(JwtAuthenticationException.class)
+    public ResponseEntity<Map<String, Object>> handleJwt(JwtAuthenticationException ex,
+                                                         HttpServletRequest request) {
+        return build(HttpStatus.UNAUTHORIZED, ex.getMessage(), request);
+    }
+
+    // ===== SPRING SECURITY =====
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Map<String, Object>> handleAuthentication(AuthenticationException ex,
+                                                                    HttpServletRequest request) {
+        return build(HttpStatus.UNAUTHORIZED, "Unauthorized", request);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex,
+                                                                  HttpServletRequest request) {
+        return build(HttpStatus.FORBIDDEN, "Access denied", request);
+    }
+
+    // ===== FALLBACK =====
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of(
-                        "timestamp", LocalDateTime.now(),
-                        "error", "Unexpected server error"
-                ));
+    public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex,
+                                                             HttpServletRequest request) {
+        // tip: log ex hier (niet naar client sturen)
+        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected server error", request);
     }
 }
