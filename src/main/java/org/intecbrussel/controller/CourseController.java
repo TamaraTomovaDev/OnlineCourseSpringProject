@@ -45,7 +45,11 @@ public class CourseController {
     @PreAuthorize("hasAnyRole('INSTRUCTOR','ADMIN')")
     public ResponseEntity<CourseResponse> createCourse(@RequestBody CourseRequest request) {
         User currentUser = getCurrentUser();
-        Course course = courseService.createCourse(request.getTitle(), request.getDescription(), currentUser);
+        Course course = courseService.createCourse(
+                request.getTitle(),
+                request.getDescription(),
+                currentUser
+        );
         return ResponseEntity.ok(toResponse(course));
     }
 
@@ -57,7 +61,12 @@ public class CourseController {
             @RequestBody CourseRequest request) {
 
         User currentUser = getCurrentUser();
-        Course course = courseService.updateCourse(id, request.getTitle(), request.getDescription(), currentUser);
+        Course course = courseService.updateCourse(
+                id,
+                request.getTitle(),
+                request.getDescription(),
+                currentUser
+        );
         return ResponseEntity.ok(toResponse(course));
     }
 
@@ -74,7 +83,11 @@ public class CourseController {
     private User getCurrentUser() {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication().getName();
-        return userService.findByUsername(username);
+        User user = userService.findByUsername(username);
+        if (user == null) {
+            throw new RuntimeException("Authenticated user not found");
+        }
+        return user;
     }
 
     private CourseResponse toResponse(Course course) {
@@ -82,7 +95,9 @@ public class CourseController {
         response.setId(course.getId());
         response.setTitle(course.getTitle());
         response.setDescription(course.getDescription());
-        response.setInstructorUsername(course.getInstructor().getUsername());
+        response.setInstructorUsername(
+                course.getInstructor() != null ? course.getInstructor().getUsername() : null
+        );
         response.setCreatedAt(course.getCreatedAt());
         response.setUpdatedAt(course.getUpdatedAt());
         return response;
