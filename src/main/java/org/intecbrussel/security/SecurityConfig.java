@@ -33,7 +33,6 @@ public class SecurityConfig {
         http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
-                // ✅ verplicht: stateless bij JWT
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 
@@ -42,18 +41,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/courses/**").permitAll()
 
                         // ===== COURSES =====
-                        .requestMatchers(HttpMethod.POST, "/api/courses").hasAnyRole("INSTRUCTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/courses/**").hasAnyRole("INSTRUCTOR", "ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/courses/**").hasAnyRole("INSTRUCTOR", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/courses/**").hasRole("ADMIN")
 
                         // ===== ENROLLMENTS =====
-                        // POST /api/courses/{id}/enroll (STUDENT self / ADMIN)
                         .requestMatchers(HttpMethod.POST, "/api/courses/**/enroll").hasAnyRole("STUDENT", "ADMIN")
-
-                        // GET /api/enrollments/me (STUDENT self / ADMIN)
                         .requestMatchers(HttpMethod.GET, "/api/enrollments/me").hasAnyRole("STUDENT", "ADMIN")
-
-                        // DELETE /api/enrollments/{id} (STUDENT self / ADMIN)
                         .requestMatchers(HttpMethod.DELETE, "/api/enrollments/**").hasAnyRole("STUDENT", "ADMIN")
 
                         // instructor endpoints
@@ -69,15 +63,15 @@ public class SecurityConfig {
                             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                             res.setContentType("application/json");
                             res.getWriter().write("""
-                        { "error": "Unauthorized" }
-                    """);
+                                    { "error": "Unauthorized" }
+                                    """);
                         })
                         .accessDeniedHandler((req, res, ex2) -> {
                             res.setStatus(HttpServletResponse.SC_FORBIDDEN);
                             res.setContentType("application/json");
                             res.getWriter().write("""
-                        { "error": "Access Denied" }
-                    """);
+                                    { "error": "Access Denied" }
+                                    """);
                         })
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

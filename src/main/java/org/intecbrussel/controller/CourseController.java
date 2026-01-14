@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/courses")
@@ -63,13 +64,13 @@ public class CourseController {
     // ---------------- DELETE COURSE ----------------
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> deleteCourse(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> deleteCourse(@PathVariable Long id) {
         User currentUser = getCurrentUser();
         courseService.deleteCourse(id, currentUser);
-        return ResponseEntity.ok("Course deleted successfully");
+        return ResponseEntity.ok(Map.of("message", "Course deleted successfully"));
     }
 
-    // ---------------- HELPER ----------------
+    // ---------------- HELPERS ----------------
     private User getCurrentUser() {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication().getName();
