@@ -13,12 +13,4 @@ public class OnlineCourseSpringProjectApplication {
     public static void main(String[] args) {
         SpringApplication.run(OnlineCourseSpringProjectApplication.class, args);
     }
-
-    // Simpele test bij opstarten
-    @Bean
-    CommandLineRunner sayHello() {
-        return args -> {
-            System.out.println("👋 Hello! Spring Boot draait en zegt hallo!");
-        };
-    }
 }
