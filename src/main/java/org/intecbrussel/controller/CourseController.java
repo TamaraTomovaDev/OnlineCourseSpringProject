@@ -1,5 +1,6 @@
 package org.intecbrussel.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.intecbrussel.dto.CourseRequest;
 import org.intecbrussel.dto.CourseResponse;
@@ -7,6 +8,7 @@ import org.intecbrussel.model.Course;
 import org.intecbrussel.model.User;
 import org.intecbrussel.service.CourseService;
 import org.intecbrussel.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,14 +45,14 @@ public class CourseController {
     // ---------------- CREATE COURSE ----------------
     @PostMapping
     @PreAuthorize("hasAnyRole('INSTRUCTOR','ADMIN')")
-    public ResponseEntity<CourseResponse> createCourse(@RequestBody CourseRequest request) {
+    public ResponseEntity<CourseResponse> createCourse(@Valid @RequestBody CourseRequest request) {
         User currentUser = getCurrentUser();
         Course course = courseService.createCourse(
                 request.getTitle(),
                 request.getDescription(),
                 currentUser
         );
-        return ResponseEntity.ok(toResponse(course));
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(course));
     }
 
     // ---------------- UPDATE COURSE ----------------
@@ -58,7 +60,7 @@ public class CourseController {
     @PreAuthorize("hasAnyRole('INSTRUCTOR','ADMIN')")
     public ResponseEntity<CourseResponse> updateCourse(
             @PathVariable Long id,
-            @RequestBody CourseRequest request) {
+            @Valid @RequestBody CourseRequest request) {
 
         User currentUser = getCurrentUser();
         Course course = courseService.updateCourse(
@@ -69,7 +71,6 @@ public class CourseController {
         );
         return ResponseEntity.ok(toResponse(course));
     }
-
     // ---------------- DELETE COURSE ----------------
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")

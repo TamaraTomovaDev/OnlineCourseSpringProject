@@ -40,15 +40,17 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/courses/**").permitAll()
 
-                        // ===== COURSES =====
-                        .requestMatchers(HttpMethod.POST, "/api/courses/**").hasAnyRole("INSTRUCTOR", "ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/courses/**").hasAnyRole("INSTRUCTOR", "ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/courses/**").hasRole("ADMIN")
-
                         // ===== ENROLLMENTS =====
-                        .requestMatchers(HttpMethod.POST, "/api/courses/**/enroll").hasAnyRole("STUDENT", "ADMIN")
+                        // ✅ valid pattern (no **/enroll)
+                        .requestMatchers(HttpMethod.POST, "/api/courses/*/enroll").hasAnyRole("STUDENT", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/enrollments/me").hasAnyRole("STUDENT", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/enrollments/**").hasAnyRole("STUDENT", "ADMIN")
+
+                        // ===== COURSES =====
+                        // ✅ create only on /api/courses
+                        .requestMatchers(HttpMethod.POST, "/api/courses").hasAnyRole("INSTRUCTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/courses/**").hasAnyRole("INSTRUCTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/courses/**").hasRole("ADMIN")
 
                         // instructor endpoints
                         .requestMatchers("/api/instructor/**").hasRole("INSTRUCTOR")
@@ -61,17 +63,15 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((req, res, ex2) -> {
                             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            res.setCharacterEncoding("UTF-8");
                             res.setContentType("application/json");
-                            res.getWriter().write("""
-                                    { "error": "Unauthorized" }
-                                    """);
+                            res.getWriter().write("{\"error\":\"Unauthorized\"}");
                         })
                         .accessDeniedHandler((req, res, ex2) -> {
                             res.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            res.setCharacterEncoding("UTF-8");
                             res.setContentType("application/json");
-                            res.getWriter().write("""
-                                    { "error": "Access Denied" }
-                                    """);
+                            res.getWriter().write("{\"error\":\"Access Denied\"}");
                         })
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

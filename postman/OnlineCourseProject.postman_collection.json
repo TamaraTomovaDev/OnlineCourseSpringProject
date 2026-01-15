@@ -1,0 +1,2203 @@
+{
+	"info": {
+		"_postman_id": "1fa96cc7-5aad-46c7-8e69-86924b7c60da",
+		"name": "OnlineCourseProject",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50433906",
+		"_collection_link": "https://tamara-tomova06-9251184.postman.co/workspace/Tamara-Tomova's-Workspace~71911dcf-17d1-4da9-85ea-6323cb77835e/collection/50433906-1fa96cc7-5aad-46c7-8e69-86924b7c60da?action=share&source=collection_link&creator=50433906"
+	},
+	"item": [
+		{
+			"name": "1. Auth",
+			"item": [
+				{
+					"name": "Login - Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", () => pm.expect(pm.response.code).to.equal(200));\r",
+									"const data = pm.response.json();\r",
+									"pm.collectionVariables.set(\"adminToken\", data.token);\r",
+									"pm.test(\"adminToken saved\", () => pm.expect(pm.collectionVariables.get(\"adminToken\")).to.be.ok);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"none\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"username\": \"admin\", \"password\": \"admin123\" }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Instructor1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", () => pm.expect(pm.response.code).to.equal(200));\r",
+									"pm.collectionVariables.set(\"instructor1Token\", pm.response.json().token);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"none\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"username\": \"hilal\", \"password\": \"inst123\" }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Instructor2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", () => pm.expect(pm.response.code).to.equal(200));\r",
+									"pm.collectionVariables.set(\"instructor2Token\", pm.response.json().token);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"none\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"username\": \"teodora\", \"password\": \"inst123\" }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Student1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", () => pm.expect(pm.response.code).to.equal(200));\r",
+									"pm.collectionVariables.set(\"student1Token\", pm.response.json().token);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"none\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"username\": \"tamara\", \"password\": \"stud123\" }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Student2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", () => pm.expect(pm.response.code).to.equal(200));\r",
+									"pm.collectionVariables.set(\"student2Token\", pm.response.json().token);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"none\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"username\": \"eva\", \"password\": \"stud123\" }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Courses",
+			"item": [
+				{
+					"name": "Public list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", () => pm.expect(pm.response.code).to.equal(200));\r",
+									"pm.test(\"Is array\", () => pm.expect(pm.response.json()).to.be.an(\"array\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"none\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create course (instructor1)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"instructor1\");\r",
+									"pm.collectionVariables.set(\"courseTitleA\", \"Course A \" + Date.now());\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200 or 201\", () => {\r",
+									"  pm.expect([200, 201]).to.include(pm.response.code);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response is JSON\", () => {\r",
+									"  const ct = (pm.response.headers.get(\"Content-Type\") || \"\").toLowerCase();\r",
+									"  pm.expect(ct).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"const c = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Course has id\", () => {\r",
+									"  pm.expect(c).to.have.property(\"id\");\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"courseIdA\", c.id);\r",
+									"console.log(\"[COURSE] courseIdA saved =\", c.id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"{{courseTitleA}}\",\r\n  \"description\": \"Created by instructor1\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/courses",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create course (instructor2)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"instructor2\");\r",
+									"pm.collectionVariables.set(\"courseTitleB\", \"Course B \" + Date.now());\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200 or 201\", () => {\r",
+									"  pm.expect([200, 201]).to.include(pm.response.code);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response is JSON\", () => {\r",
+									"  const ct = (pm.response.headers.get(\"Content-Type\") || \"\").toLowerCase();\r",
+									"  pm.expect(ct).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"const c = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Course has id\", () => {\r",
+									"  pm.expect(c).to.have.property(\"id\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Title matches request\", () => {\r",
+									"  pm.expect(c).to.have.property(\"title\");\r",
+									"  pm.expect(c.title).to.eql(pm.collectionVariables.get(\"courseTitleB\"));\r",
+									"});\r",
+									"\r",
+									"// Save for later ownership tests\r",
+									"pm.collectionVariables.set(\"courseIdB\", c.id);\r",
+									"console.log(\"[COURSE] courseIdB saved =\", c.id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"{{courseTitleB}}\",\r\n  \"description\": \"Created by instructor2\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/courses",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ownership test",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"instructor1\");\r",
+									"pm.collectionVariables.set(\"updateTitle\", \"HACK \" + Date.now());\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 403 (instructor cannot update other instructor course)\", () => {\r",
+									"  pm.expect(pm.response.code).to.equal(403);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error is JSON and has error/message field\", () => {\r",
+									"  const ct = (pm.response.headers.get(\"Content-Type\") || \"\").toLowerCase();\r",
+									"  pm.expect(ct).to.include(\"application/json\");\r",
+									"  const err = pm.response.json();\r",
+									"  pm.expect(err).to.be.an(\"object\");\r",
+									"  pm.expect(err).to.have.any.keys(\"error\", \"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"{{updateTitle}}\",\r\n  \"description\": \"Instructor1 trying to update instructor2 course\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/{{courseIdB}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"{{courseIdB}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"admin\");\r",
+									"\r",
+									"const idB = pm.collectionVariables.get(\"courseIdB\");\r",
+									"if (!idB) {\r",
+									"  throw new Error(\"courseIdB missing. Run 'Create course (instructor2)' first.\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Delete course status is 200 or 204\", () => {\r",
+									"  pm.expect([200, 204]).to.include(pm.response.code);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/{{courseIdB}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"{{courseIdB}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Enrollments",
+			"item": [
+				{
+					"name": "Student1 enroll courseIdA",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"student1\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const code = pm.response.code;\r",
+									"\r",
+									"pm.test(\"Response is JSON\", () => {\r",
+									"  const ct = (pm.response.headers.get(\"Content-Type\") || \"\").toLowerCase();\r",
+									"  pm.expect(ct).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"if ([200, 201].includes(code)) {\r",
+									"  const e = pm.response.json();\r",
+									"\r",
+									"  pm.test(\"Enroll success status\", () => {\r",
+									"    pm.expect([200, 201]).to.include(code);\r",
+									"  });\r",
+									"\r",
+									"  pm.test(\"Enrollment has id\", () => {\r",
+									"    pm.expect(e).to.have.property(\"id\");\r",
+									"  });\r",
+									"\r",
+									"  pm.collectionVariables.set(\"enrollmentId\", e.id);\r",
+									"  console.log(\"[ENROLL] enrollmentId saved =\", e.id);\r",
+									"\r",
+									"} else if (code === 403) {\r",
+									"  const err = pm.response.json();\r",
+									"\r",
+									"  pm.test(\"Enroll forbidden (403)\", () => {\r",
+									"    pm.expect(code).to.equal(403);\r",
+									"  });\r",
+									"\r",
+									"  pm.test(\"Security error has error/message\", () => {\r",
+									"    pm.expect(err).to.be.an(\"object\");\r",
+									"    pm.expect(err).to.have.any.keys(\"error\", \"message\");\r",
+									"  });\r",
+									"\r",
+									"  console.log(\"❌ ENROLL denied body:\", err);\r",
+									"\r",
+									"} else if (code === 401) {\r",
+									"  console.log(\"❌ ENROLL unauthorized:\", pm.response.text());\r",
+									"  pm.test(\"Unauthorized (401)\", () => pm.expect(code).to.equal(401));\r",
+									"\r",
+									"} else {\r",
+									"  console.log(\"❌ ENROLL unexpected:\", pm.response.text());\r",
+									"  pm.test(`Unexpected status ${code}`, () => pm.expect.fail(\"Unexpected status\"));\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/{{courseIdA}}/enroll",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"{{courseIdA}}",
+								"enroll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Duplicate enrollment",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"student1\");\r",
+									"\r",
+									"const id = pm.collectionVariables.get(\"courseIdA\");\r",
+									"if (!id) throw new Error(\"courseIdA missing\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Duplicate enrollment -> status 409\", () => {\r",
+									"  pm.expect(pm.response.code).to.equal(409);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Duplicate enrollment -> response is JSON\", () => {\r",
+									"  const ct = (pm.response.headers.get(\"Content-Type\") || \"\").toLowerCase();\r",
+									"  pm.expect(ct).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Duplicate enrollment -> error body (tolerant)\", () => {\r",
+									"  const b = pm.response.json();\r",
+									"  pm.expect(b).to.be.an(\"object\");\r",
+									"  pm.expect(b).to.have.any.keys(\"error\", \"message\", \"status\", \"timestamp\", \"path\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/{{courseIdA}}/enroll",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"{{courseIdA}}",
+								"enroll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Student1 my enrollments",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"student1\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", () => pm.expect(pm.response.code).to.equal(200));\r",
+									"\r",
+									"const list = pm.response.json();\r",
+									"pm.test(\"Response is array\", () => pm.expect(list).to.be.an(\"array\"));\r",
+									"\r",
+									"const enrollmentId = pm.collectionVariables.get(\"enrollmentId\");\r",
+									"if (enrollmentId) {\r",
+									"  pm.test(\"Contains enrollmentId\", () => {\r",
+									"    pm.expect(list.some(x => String(x.id) === String(enrollmentId))).to.equal(true);\r",
+									"  });\r",
+									"} else {\r",
+									"  console.warn(\"enrollmentId is not set (did you save it on the first enroll request?)\");\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/enrollments/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"enrollments",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Student2 my enrollments",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"student2\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", () => pm.expect(pm.response.code).to.equal(200));\r",
+									"\r",
+									"const list = pm.response.json();\r",
+									"pm.test(\"Response is array\", () => pm.expect(list).to.be.an(\"array\"));\r",
+									"\r",
+									"const enrollmentId = pm.collectionVariables.get(\"enrollmentId\");\r",
+									"if (enrollmentId) {\r",
+									"  pm.test(\"Does NOT contain student1 enrollmentId\", () => {\r",
+									"    pm.expect(list.some(x => String(x.id) === String(enrollmentId))).to.equal(false);\r",
+									"  });\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/enrollments/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"enrollments",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Instructor enrollments",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"instructor1\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", () => pm.expect(pm.response.code).to.equal(200));\r",
+									"const list = pm.response.json();\r",
+									"pm.test(\"Response is array\", () => pm.expect(list).to.be.an(\"array\"));\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/instructor/enrollments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"instructor",
+								"enrollments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin enrollments",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"admin\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", () => pm.expect(pm.response.code).to.equal(200));\r",
+									"const list = pm.response.json();\r",
+									"pm.test(\"Response is array\", () => pm.expect(list).to.be.an(\"array\"));\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/enrollments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"enrollments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel enrollment (student self)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"student1\");\r",
+									"\r",
+									"const eId = pm.collectionVariables.get(\"enrollmentId\");\r",
+									"if (!eId) throw new Error(\"enrollmentId missing\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200 or 204\", () => {\r",
+									"  pm.expect([200, 204]).to.include(pm.response.code);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/enrollments/{{enrollmentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"enrollments",
+								"{{enrollmentId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel opnieuw",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"student1\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 404 (already deleted) or 400\", () => {\r",
+									"  pm.expect([404, 400]).to.include(pm.response.code);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error JSON\", () => {\r",
+									"  const ct = (pm.response.headers.get(\"Content-Type\") || \"\").toLowerCase();\r",
+									"  pm.expect(ct).to.include(\"application/json\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/enrollments/{{enrollmentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"enrollments",
+								"{{enrollmentId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Admin",
+			"item": [
+				{
+					"name": "Get all users",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"admin\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ADMIN USERS: status is 200\", () => {\r",
+									"  pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"ADMIN USERS: response is array\", () => {\r",
+									"  pm.expect(pm.response.json()).to.be.an(\"array\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"ADMIN USERS: users have id/username/role and no password\", () => {\r",
+									"  const users = pm.response.json();\r",
+									"  if (users.length === 0) return;\r",
+									"\r",
+									"  const u = users[0];\r",
+									"  pm.expect(u).to.have.property(\"id\");\r",
+									"  pm.expect(u).to.have.property(\"username\");\r",
+									"  pm.expect(u).to.have.property(\"role\");\r",
+									"  pm.expect(u).to.not.have.property(\"password\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find a non-admin user to modify",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"admin\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ADMIN PICK USER: status is 200\", () => {\r",
+									"  pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"ADMIN PICK USER: save targetUserId (not admin)\", () => {\r",
+									"  const users = pm.response.json();\r",
+									"\r",
+									"  // pick first user that is NOT ADMIN\r",
+									"  const target = users.find(u => (u.role || \"\").toUpperCase() !== \"ADMIN\");\r",
+									"\r",
+									"  pm.expect(target, \"No non-admin user found (need seed students/instructors)\").to.exist;\r",
+									"\r",
+									"  pm.collectionVariables.set(\"targetUserId\", target.id);\r",
+									"  pm.collectionVariables.set(\"targetUsername\", target.username);\r",
+									"  pm.collectionVariables.set(\"targetOldRole\", target.role);\r",
+									"\r",
+									"  console.log(\"[ADMIN] targetUserId =\", target.id, \"username =\", target.username, \"oldRole =\", target.role);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change user role (to INSTRUCTOR)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"admin\");\r",
+									"\r",
+									"const id = pm.collectionVariables.get(\"targetUserId\");\r",
+									"if (!id) throw new Error(\"targetUserId missing. Run 'ADMIN – Find a non-admin user to modify' first.\");\r",
+									"\r",
+									"pm.collectionVariables.set(\"newRole\", \"INSTRUCTOR\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ADMIN ROLE: status is 200\", () => {\r",
+									"  pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"ADMIN ROLE: response has updated role\", () => {\r",
+									"  const b = pm.response.json();\r",
+									"  // soms return je een UserResponse, soms een message\r",
+									"  if (b.role) {\r",
+									"    pm.expect((b.role || \"\").toUpperCase()).to.equal(\"INSTRUCTOR\");\r",
+									"  } else {\r",
+									"    pm.expect(b).to.have.any.keys(\"message\", \"status\", \"id\"); // tolerant\r",
+									"  }\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"role\": \"{{newRole}}\" }\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users/{{targetUserId}}/role",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users",
+								"{{targetUserId}}",
+								"role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change role for non-existing user (404)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"admin\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ERROR: status is 404 Not Found\", () => {\r",
+									"  pm.expect(pm.response.code).to.equal(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"ERROR: GlobalExceptionHandler format\", () => {\r",
+									"  const b = pm.response.json();\r",
+									"  pm.expect(b).to.have.property(\"timestamp\");\r",
+									"  pm.expect(b).to.have.property(\"status\", 404);\r",
+									"  pm.expect(b).to.have.property(\"error\");\r",
+									"  pm.expect(b).to.have.property(\"message\");\r",
+									"  pm.expect(b).to.have.property(\"path\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"role\": \"INSTRUCTOR\" }\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users/999999/role",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users",
+								"999999",
+								"role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register temp user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"none\");\r",
+									"pm.collectionVariables.set(\"timestamp\", Date.now());\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"REGISTER TEMP: status is 200 or 201\", () => {\r",
+									"  pm.expect([200,201]).to.include(pm.response.code);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"temp_user_{{timestamp}}\",\r\n  \"email\": \"temp_{{timestamp}}@test.com\",\r\n  \"password\": \"Password123!\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find temp user id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"admin\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const ts = pm.collectionVariables.get(\"timestamp\");\r",
+									"pm.test(\"FIND TEMP: save tempUserId\", () => {\r",
+									"  const users = pm.response.json();\r",
+									"  const u = users.find(x => x.username === `temp_user_${ts}`);\r",
+									"  pm.expect(u, \"Temp user not found in admin list\").to.exist;\r",
+									"  pm.collectionVariables.set(\"tempUserId\", u.id);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete temp user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"admin\");\r",
+									"const id = pm.collectionVariables.get(\"tempUserId\");\r",
+									"if (!id) throw new Error(\"tempUserId missing.\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ADMIN DELETE: status is 200\", () => {\r",
+									"  pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"ADMIN DELETE: response has message\", () => {\r",
+									"  const b = pm.response.json();\r",
+									"  pm.expect(b).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users/{{tempUserId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users",
+								"{{tempUserId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Security",
+			"item": [
+				{
+					"name": "Unauthorized (No Token) on Admin Users",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"none\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"SECURITY: status is 401\", () => {\r",
+									"  pm.expect(pm.response.code).to.equal(401);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forbidden (Student) on Admin Users",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"student1\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"SECURITY: status is 403\", () => {\r",
+									"  pm.expect(pm.response.code).to.equal(403);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forbidden (Student) Create Course",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"student1\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"SECURITY: status is 403\", () => {\r",
+									"  pm.expect(pm.response.code).to.equal(403);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Should Not Be Created\",\r\n  \"description\": \"Student must be forbidden\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/courses",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forbidden (Instructor) Delete Course",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"instructor1\");\r",
+									"\r",
+									"const id = pm.collectionVariables.get(\"courseIdA\");\r",
+									"if (!id) throw new Error(\"courseIdA missing. Run 'Create course (instructor1)' first.\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"SECURITY: status is 403\", () => {\r",
+									"  pm.expect(pm.response.code).to.equal(403);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/{{courseIdA}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"{{courseIdA}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forbidden (Student) Instructor Enrollments Endpoint",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"student1\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 403 (student forbidden)\", () => {\r",
+									"  pm.expect(pm.response.code).to.equal(403);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error is JSON\", () => {\r",
+									"  const ct = (pm.response.headers.get(\"Content-Type\") || \"\").toLowerCase();\r",
+									"  pm.expect(ct).to.include(\"application/json\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/instructor/enrollments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"instructor",
+								"enrollments"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6. Errors",
+			"item": [
+				{
+					"name": "Course Not Found (404)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"none\"); // public endpoint\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ERROR: status is 404\", () => {\r",
+									"  pm.expect(pm.response.code).to.equal(404);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/999999",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"999999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid Path Variable (400)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"none\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ERROR: status is 400\", () => {\r",
+									"  pm.expect(pm.response.code).to.equal(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/abc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"abc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validation Failed (400) Create Course with Empty Title",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"instructor1\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ERROR: status is 400\", () => {\r",
+									"  pm.expect(pm.response.code).to.equal(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"ERROR: validation has fields map\", () => {\r",
+									"  const b = pm.response.json();\r",
+									"  pm.expect(b).to.have.property(\"message\");\r",
+									"  // jouw handler zet message = \"Validation failed\"\r",
+									"  pm.expect(String(b.message).toLowerCase()).to.include(\"validation\");\r",
+									"  pm.expect(b).to.have.property(\"fields\");\r",
+									"  pm.expect(b.fields).to.be.an(\"object\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"\",\r\n  \"description\": \"should fail validation\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/courses",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Non-Existing Enrollment (404)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"authAs\", \"admin\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ERROR: status is 404\", () => {\r",
+									"  pm.expect(pm.response.code).to.equal(404);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/enrollments/999999",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"enrollments",
+								"999999"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					"/**\r",
+					" * AUTO AUTH (Collection-level Pre-request Script)\r",
+					" * Usage: set pm.collectionVariables.set(\"authAs\", \"admin|instructor1|instructor2|student1|student2|none\")\r",
+					" * Tokens must exist as collection variables:\r",
+					" * adminToken, instructor1Token, instructor2Token, student1Token, student2Token\r",
+					" */\r",
+					"\r",
+					"const whoRaw = pm.collectionVariables.get(\"authAs\");\r",
+					"const who = (whoRaw ? String(whoRaw) : \"none\").trim().toLowerCase();\r",
+					"\r",
+					"const tokenMap = {\r",
+					"  admin: pm.collectionVariables.get(\"adminToken\"),\r",
+					"  instructor1: pm.collectionVariables.get(\"instructor1Token\"),\r",
+					"  instructor2: pm.collectionVariables.get(\"instructor2Token\"),\r",
+					"  student1: pm.collectionVariables.get(\"student1Token\"),\r",
+					"  student2: pm.collectionVariables.get(\"student2Token\"),\r",
+					"};\r",
+					"\r",
+					"const token = tokenMap[who];\r",
+					"\r",
+					"// Always prefer JSON\r",
+					"pm.request.headers.upsert({ key: \"Accept\", value: \"application/json\" });\r",
+					"\r",
+					"// Remove stale Authorization header\r",
+					"pm.request.headers.remove(\"Authorization\");\r",
+					"\r",
+					"// Debug\r",
+					"console.log(`[AUTO-AUTH] ${pm.request.method} ${pm.request.url.toString()}`);\r",
+					"console.log(`[AUTO-AUTH] authAs = ${who}`);\r",
+					"\r",
+					"// Public request\r",
+					"if (who === \"none\") {\r",
+					"  console.log(\"[AUTO-AUTH] Public request (no Authorization).\");\r",
+					"  return;\r",
+					"}\r",
+					"\r",
+					"// Unknown authAs\r",
+					"if (!Object.prototype.hasOwnProperty.call(tokenMap, who)) {\r",
+					"  console.warn(`[AUTO-AUTH] Unknown authAs=\"${whoRaw}\". Use admin|instructor1|instructor2|student1|student2|none`);\r",
+					"  return;\r",
+					"}\r",
+					"\r",
+					"// Token missing\r",
+					"if (!token || String(token).trim().length < 20) {\r",
+					"  console.warn(`[AUTO-AUTH] Token missing/too short for authAs=${who}. Run the login requests first.`);\r",
+					"  return;\r",
+					"}\r",
+					"\r",
+					"// Set Authorization\r",
+					"pm.request.headers.upsert({ key: \"Authorization\", value: `Bearer ${token}` });\r",
+					"console.log(`[AUTO-AUTH] Authorization set ✅ (token length=${String(token).length})`);\r",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					"// ==============================\r",
+					"// Global Error Contract Tests (Collection-level)\r",
+					"// Supports BOTH formats:\r",
+					"// 1) SecurityConfig: { \"error\": \"Unauthorized\" / \"Access Denied\" }\r",
+					"// 2) GlobalExceptionHandler: { timestamp, status, error, message, path, ... }\r",
+					"// ==============================\r",
+					"\r",
+					"function ct() {\r",
+					"  return (pm.response.headers.get(\"Content-Type\") || \"\").toLowerCase();\r",
+					"}\r",
+					"function safeJson() {\r",
+					"  try { return pm.response.json(); } catch (e) { return null; }\r",
+					"}\r",
+					"\r",
+					"if (pm.response.code < 400) {\r",
+					"  pm.test(\"SUCCESS: status < 400\", () => pm.expect(pm.response.code).to.be.below(400));\r",
+					"  return;\r",
+					"}\r",
+					"\r",
+					"pm.test(\"ERROR: response is JSON\", () => {\r",
+					"  pm.expect(ct()).to.include(\"application/json\");\r",
+					"});\r",
+					"\r",
+					"const body = safeJson();\r",
+					"\r",
+					"pm.test(\"ERROR: body is valid JSON object\", () => {\r",
+					"  pm.expect(body).to.be.an(\"object\");\r",
+					"});\r",
+					"\r",
+					"console.log(\"❌ ERROR BODY:\", body);\r",
+					"\r",
+					"// Security errors (401/403)\r",
+					"if (pm.response.code === 401 || pm.response.code === 403) {\r",
+					"  pm.test(\"SECURITY ERROR: has error string\", () => {\r",
+					"    pm.expect(body).to.have.property(\"error\");\r",
+					"    pm.expect(body.error).to.be.a(\"string\").and.not.empty;\r",
+					"  });\r",
+					"\r",
+					"  if (pm.response.code === 401) {\r",
+					"    pm.test(\"SECURITY ERROR: looks like Unauthorized\", () => {\r",
+					"      pm.expect(body.error.toLowerCase()).to.include(\"unauthorized\");\r",
+					"    });\r",
+					"  }\r",
+					"\r",
+					"  if (pm.response.code === 403) {\r",
+					"    pm.test(\"SECURITY ERROR: looks like Forbidden/Access denied\", () => {\r",
+					"      const e = body.error.toLowerCase();\r",
+					"      pm.expect(e).to.satisfy(v =>\r",
+					"        v.includes(\"access denied\") || v.includes(\"forbidden\")\r",
+					"      );\r",
+					"    });\r",
+					"  }\r",
+					"\r",
+					"  return;\r",
+					"}\r",
+					"\r",
+					"// Domain/API errors (GlobalExceptionHandler style)\r",
+					"pm.test(\"API ERROR: has timestamp/status/error/message/path\", () => {\r",
+					"  pm.expect(body).to.have.property(\"timestamp\");\r",
+					"  pm.expect(body).to.have.property(\"status\");\r",
+					"  pm.expect(body).to.have.property(\"error\");\r",
+					"  pm.expect(body).to.have.property(\"message\");\r",
+					"  pm.expect(body).to.have.property(\"path\");\r",
+					"});\r",
+					"\r",
+					"pm.test(\"API ERROR: status matches HTTP code\", () => {\r",
+					"  pm.expect(body.status).to.eql(pm.response.code);\r",
+					"});\r",
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "adminToken",
+			"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2ODQ0MDQxNSwiZXhwIjoxNzY4NTI2ODE1fQ.zDc7dkZCva0am5ELfNXOIrNlueoyayUZLQMk9YW18cQ22GKiKxhrQaGs2_kIOueW"
+		},
+		{
+			"key": "instructor1Token",
+			"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJoaWxhbCIsInJvbGUiOiJJTlNUUlVDVE9SIiwiaWF0IjoxNzY4NDQwNDE1LCJleHAiOjE3Njg1MjY4MTV9.uQSpRgQvScwYXaYnOxx5kZiEKLf-wXfYZtquwnaYfApCbPINolyMDyX3Ibf8K6ht"
+		},
+		{
+			"key": "instructor2Token",
+			"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZW9kb3JhIiwicm9sZSI6IklOU1RSVUNUT1IiLCJpYXQiOjE3Njg0NDA0MTYsImV4cCI6MTc2ODUyNjgxNn0.p9hhUN40F956gOfaN9EAPib_Js-MLJyKmGFSeb-ZM3hyzwWt7_FYpGI1fppqpjst"
+		},
+		{
+			"key": "student1Token",
+			"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0YW1hcmEiLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc2ODQ0MDQxNiwiZXhwIjoxNzY4NTI2ODE2fQ.n9bRhrLiZ6p0MfUWM42vXPixlnYzCve5a-pokBnKwNtRZQO9oiejIASLVrMs4GML"
+		},
+		{
+			"key": "student2Token",
+			"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJldmEiLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc2ODQ0MDQxNiwiZXhwIjoxNzY4NTI2ODE2fQ.dj1MWGZ9KXEN2TckSBzestY7f57xqkSN4Di6UE1pw8uKV-Crh12xQt4mJ95nr4yD"
+		},
+		{
+			"key": "courseIdA",
+			"value": null
+		},
+		{
+			"key": "courseIdB",
+			"value": 41
+		},
+		{
+			"key": "enrollmentId",
+			"value": 5
+		},
+		{
+			"key": "authAs",
+			"value": "none"
+		},
+		{
+			"key": "courseTitleA",
+			"value": "Course A 1768440416590"
+		},
+		{
+			"key": "courseTitleB",
+			"value": "Course B 1768440416652"
+		},
+		{
+			"key": "updateTitle",
+			"value": "HACK 1768440416761"
+		},
+		{
+			"key": "targetUserId",
+			"value": 2
+		},
+		{
+			"key": "targetUsername",
+			"value": "hilal"
+		},
+		{
+			"key": "targetOldRole",
+			"value": "INSTRUCTOR"
+		},
+		{
+			"key": "newRole",
+			"value": "INSTRUCTOR"
+		},
+		{
+			"key": "timestamp",
+			"value": 1768438793480
+		},
+		{
+			"key": "tempUserId",
+			"value": 8
+		}
+	]
+}

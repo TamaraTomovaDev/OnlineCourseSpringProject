@@ -3,8 +3,6 @@ package org.intecbrussel.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -73,14 +71,13 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.CONFLICT, ex.getMessage(), request);
     }
 
-    // als je DuplicateResourceException gebruikt in register (username/email)
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<Map<String, Object>> handleDuplicateResource(DuplicateResourceException ex,
                                                                        HttpServletRequest request) {
         return build(HttpStatus.CONFLICT, ex.getMessage(), request);
     }
 
-    // ===== AUTH / JWT =====
+    // ===== AUTH/JWT DOMAIN ERRORS (login/register) =====
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<Map<String, Object>> handleInvalidCredentials(InvalidCredentialsException ex,
                                                                         HttpServletRequest request) {
@@ -91,19 +88,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleJwt(JwtAuthenticationException ex,
                                                          HttpServletRequest request) {
         return build(HttpStatus.UNAUTHORIZED, ex.getMessage(), request);
-    }
-
-    // ===== SPRING SECURITY =====
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<Map<String, Object>> handleAuthentication(AuthenticationException ex,
-                                                                    HttpServletRequest request) {
-        return build(HttpStatus.UNAUTHORIZED, "Unauthorized", request);
-    }
-
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex,
-                                                                  HttpServletRequest request) {
-        return build(HttpStatus.FORBIDDEN, "Access denied", request);
     }
 
     // ===== FALLBACK =====
