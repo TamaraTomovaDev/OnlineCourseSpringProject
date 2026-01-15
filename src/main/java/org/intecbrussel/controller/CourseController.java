@@ -25,7 +25,6 @@ public class CourseController {
     private final CourseService courseService;
     private final UserService userService;
 
-    // ---------------- LIST ALL COURSES ----------------
     @GetMapping
     public ResponseEntity<List<CourseResponse>> getAllCourses() {
         List<Course> courses = courseService.listAll();
@@ -35,14 +34,12 @@ public class CourseController {
         return ResponseEntity.ok(responses);
     }
 
-    // ---------------- GET COURSE BY ID ----------------
     @GetMapping("/{id}")
     public ResponseEntity<CourseResponse> getCourse(@PathVariable Long id) {
         Course course = courseService.getById(id);
         return ResponseEntity.ok(toResponse(course));
     }
 
-    // ---------------- CREATE COURSE ----------------
     @PostMapping
     @PreAuthorize("hasAnyRole('INSTRUCTOR','ADMIN')")
     public ResponseEntity<CourseResponse> createCourse(@Valid @RequestBody CourseRequest request) {
@@ -55,7 +52,6 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(course));
     }
 
-    // ---------------- UPDATE COURSE ----------------
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('INSTRUCTOR','ADMIN')")
     public ResponseEntity<CourseResponse> updateCourse(
@@ -71,7 +67,7 @@ public class CourseController {
         );
         return ResponseEntity.ok(toResponse(course));
     }
-    // ---------------- DELETE COURSE ----------------
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> deleteCourse(@PathVariable Long id) {
@@ -80,7 +76,6 @@ public class CourseController {
         return ResponseEntity.ok(Map.of("message", "Course deleted successfully"));
     }
 
-    // ---------------- HELPERS ----------------
     private User getCurrentUser() {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication().getName();

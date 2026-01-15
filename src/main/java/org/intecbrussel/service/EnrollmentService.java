@@ -26,7 +26,7 @@ public class EnrollmentService {
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
 
-    // ================= ENROLL =================
+    // ENROLL
 
     // STUDENT → zichzelf inschrijven
     public Enrollment enrollSelf(Long courseId, User student) {
@@ -66,7 +66,7 @@ public class EnrollmentService {
         return enrollmentRepository.save(enrollment);
     }
 
-    // ================= LIST =================
+    // LIST
 
     // STUDENT → alleen eigen enrollments
     public List<Enrollment> getStudentEnrollments(User student) {
@@ -86,7 +86,7 @@ public class EnrollmentService {
         return enrollmentRepository.findAll();
     }
 
-    // ================= CANCEL =================
+    // CANCEL
 
     public void cancelEnrollment(Long enrollmentId, User user) {
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)

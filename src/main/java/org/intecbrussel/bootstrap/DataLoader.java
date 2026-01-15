@@ -31,7 +31,7 @@ public class DataLoader implements CommandLineRunner {
             return;
         }
 
-        // ===== USERS =====
+        // USERS
         User admin = new User(null, "admin", "admin@test.com",
                 passwordEncoder.encode("admin123"), Role.ADMIN);
 
@@ -52,14 +52,14 @@ public class DataLoader implements CommandLineRunner {
 
         userRepository.saveAll(List.of(admin, instructor1, instructor2, student1, student2, student3));
 
-        // ===== COURSES =====
+        // COURSES
         Course course1 = new Course(null, "Java Fundamentals", "Intro to Java", instructor1);
         Course course2 = new Course(null, "Spring Boot", "Build secure REST APIs", instructor1);
         Course course3 = new Course(null, "Nederlands", "Nederlands oefenen", instructor2);
 
         courseRepository.saveAll(List.of(course1, course2, course3));
 
-        // ===== ENROLLMENTS =====
+        // ENROLLMENTS
         // (Als je @PrePersist gebruikt in Enrollment, mag enrollmentDate null zijn.)
         LocalDateTime now = LocalDateTime.now();
 

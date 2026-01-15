@@ -23,11 +23,6 @@ public class EnrollmentController {
     private final EnrollmentService enrollmentService;
     private final UserService userService;
 
-    /**
-     * POST /api/courses/{id}/enroll
-     * - STUDENT: schrijft zichzelf in
-     * - ADMIN: schrijft student in via ?studentId=...
-     */
     @PostMapping("/courses/{courseId}/enroll")
     @PreAuthorize("hasAnyRole('STUDENT','ADMIN')")
     public ResponseEntity<EnrollmentResponse> enroll(
@@ -49,11 +44,6 @@ public class EnrollmentController {
         return ResponseEntity.ok(toResponse(enrollment));
     }
 
-    /**
-     * GET /api/enrollments/me
-     * - STUDENT: ziet alleen eigen enrollments
-     * - ADMIN: mag dit endpoint ook gebruiken (zal meestal leeg zijn tenzij admin ook enrollments heeft)
-     */
     @GetMapping("/enrollments/me")
     @PreAuthorize("hasAnyRole('STUDENT','ADMIN')")
     public ResponseEntity<List<EnrollmentResponse>> myEnrollments() {
@@ -67,10 +57,6 @@ public class EnrollmentController {
         );
     }
 
-    /**
-     * GET /api/instructor/enrollments
-     * - INSTRUCTOR: ziet enrollments van eigen courses
-     */
     @GetMapping("/instructor/enrollments")
     @PreAuthorize("hasRole('INSTRUCTOR')")
     public ResponseEntity<List<EnrollmentResponse>> instructorEnrollments() {
@@ -82,10 +68,6 @@ public class EnrollmentController {
         );
     }
 
-    /**
-     * GET /api/admin/enrollments
-     * - ADMIN: ziet alle enrollments
-     */
     @GetMapping("/admin/enrollments")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<EnrollmentResponse>> allEnrollments() {

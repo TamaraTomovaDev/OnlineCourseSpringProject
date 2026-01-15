@@ -15,7 +15,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // ===== helper om consistente JSON te maken =====
+    // Helper om consistente JSON te maken
     private ResponseEntity<Map<String, Object>> build(HttpStatus status, String message, HttpServletRequest request) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(body);
     }
 
-    // ===== VALIDATION ( @Valid ) =====
+    // VALIDATION ( @Valid )
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex,
                                                                 HttpServletRequest request) {
@@ -45,14 +45,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(body);
     }
 
-    // ===== INVALID PARAMS =====
+    // INVALID PARAMS
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Map<String, Object>> handleTypeMismatch(MethodArgumentTypeMismatchException ex,
                                                                   HttpServletRequest request) {
         return build(HttpStatus.BAD_REQUEST, "Invalid parameter value", request);
     }
 
-    // ===== DOMAIN EXCEPTIONS =====
+    // DOMAIN EXCEPTIONS
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleNotFound(ResourceNotFoundException ex,
                                                               HttpServletRequest request) {
@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.CONFLICT, ex.getMessage(), request);
     }
 
-    // ===== AUTH/JWT DOMAIN ERRORS (login/register) =====
+    // AUTH/JWT DOMAIN ERRORS (login/register)
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<Map<String, Object>> handleInvalidCredentials(InvalidCredentialsException ex,
                                                                         HttpServletRequest request) {
@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.UNAUTHORIZED, ex.getMessage(), request);
     }
 
-    // ===== FALLBACK =====
+    // FALLBACK
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex,
                                                              HttpServletRequest request) {

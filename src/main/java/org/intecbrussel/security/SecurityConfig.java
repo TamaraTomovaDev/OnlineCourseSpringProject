@@ -36,17 +36,17 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 
-                        // ===== PUBLIC =====
+                        // PUBLIC
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/courses/**").permitAll()
 
-                        // ===== ENROLLMENTS =====
+                        // ENROLLMENTS
                         // ✅ valid pattern (no **/enroll)
                         .requestMatchers(HttpMethod.POST, "/api/courses/*/enroll").hasAnyRole("STUDENT", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/enrollments/me").hasAnyRole("STUDENT", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/enrollments/**").hasAnyRole("STUDENT", "ADMIN")
 
-                        // ===== COURSES =====
+                        // COURSES
                         // ✅ create only on /api/courses
                         .requestMatchers(HttpMethod.POST, "/api/courses").hasAnyRole("INSTRUCTOR", "ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/courses/**").hasAnyRole("INSTRUCTOR", "ADMIN")
