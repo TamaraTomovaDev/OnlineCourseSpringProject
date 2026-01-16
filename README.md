@@ -232,11 +232,6 @@ Alle fouten worden centraal afgehandeld via `GlobalExceptionHandler (@RestContro
 * **UserServiceTest** → 8 tests
 * **AuthServiceTest** → 6 tests
 
-**Test tips:**
-
-* Mockito stubbings moeten correct zijn, anders krijg je `UnnecessaryStubbingException`.
-* Testgevallen dekken: success, invalid input, duplicate entries, unauthorized access.
-
 ---
 
 ## ⚙️ Configuratie
